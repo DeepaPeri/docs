@@ -588,6 +588,7 @@ public class Test{
 * Every string literal is an instance of class `String`. `int l = "Hello".length();`
 * String is immutable.
 
+
 ## Tips
 
 ```java

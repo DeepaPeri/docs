@@ -193,4 +193,177 @@ public class Test{
 
 **When a super class reference variable references a sub class object** it can only access those properties (methods or data) that are defined in its own class. For example, from the above example, you cannot call `shape.getLength();` => the *Shape* class does not have *getLength()* defined in itself.
 
-**Using super**: From constructor and any methods - to access methods of immediate super class.
+## Using `super` 
+* The keyword `super` can be used from within constructors and instance methods.
+
+### Using `super` in constructor
+* From a *constructor* of a class, we can call its super class *constructor* using keyword `super`.
+* By default, the first statement of any *constructor* is a call to its super class *constructor*.
+* If you don't place a call to super class *constructor* in a *constructor* of a class, compiler adds a call to default *constructor* of its super class - as a first statement. Check the following example to understand this. Verify the output of this program.
+
+```java
+class Shape{
+	Shape(){
+		System.out.println("Shape class no argument constructor");
+	}
+	Shape(int x){
+		System.out.println("Shape class one argument constructor");
+	}
+}
+class Box extends Shape{ //Box is a sub class of Shape
+	Box(){
+		//At this line compiler adds the statement "super();"
+		System.out.println("Box class no argument constructor");
+	}
+	Box(int x){
+		//At this line compiler adds the statement "super();"
+		System.out.println("Box class one argument constructor");
+	}
+}
+public class Test{
+	public static void main(String a[]){
+		Box b1 = new Box();
+		Box b2 = new Box(4);
+	}
+}
+```
+
+**Output**
+```
+Shape class no argument constructor
+Box class no argument constructor
+Shape class no argument constructor
+Box class one argument constructor
+```
+
+* **Call to super class constructor must be the first statement**: If you want to call a super class constructor, it must be the first statement in the sub class constructor.
+
+```java
+class Shape{
+	Shape(){
+		System.out.println("Shape class no argument constructor");
+	}
+}
+class Box extends Shape{ //Box is a sub class of Shape
+	Box(){
+		System.out.println("Box class no argument constructor");
+		super(); //compiler error
+	}
+}
+public class Test{
+	public static void main(String a[]){
+		Box b1 = new Box();
+	}
+}
+```
+
+**Output demonstrating the compiler error**
+```
+Test.java:9: error: call to super must be first statement in constructor
+                super(); //compiler error
+                     ^
+1 error
+```
+
+* We can call any constructor of super class from a sub class constructor.
+```java
+class Shape{
+	Shape(){
+		System.out.println("Shape class no argument constructor");
+	}
+	Shape(int x){
+		System.out.println("Shape class one argument constructor");
+	}
+}
+class Box extends Shape{ //Box is a sub class of Shape
+	Box(){
+		super(5); //Calling one argument constructor of super class.
+		System.out.println("Box class no argument constructor");
+	}
+	Box(int x){
+		super(); //Calling no argument constructor of super class.
+		System.out.println("Box class one argument constructor");
+	}
+}
+public class Test{
+	public static void main(String a[]){
+		Box b1 = new Box();
+		Box b2 = new Box(4);
+	}
+}
+```
+
+**Output**: Read the code above and validate your understanding with the output below.
+```
+Shape class one argument constructor
+Box class no argument constructor
+Shape class no argument constructor
+Box class one argument constructor
+```
+
+* We can call a super class constructor explicitly, even if it is not defined by us.
+```java
+class Shape{
+	
+}
+class Box extends Shape{ //Box is a sub class of Shape
+	Box(int x){
+		super(); //We have not defined any constructor in super class.
+		//Here we are calling compiler provided default constructor.
+		//However, the above call is redundant. Compiler will anyway add this statement.
+		System.out.println("Box class one argument constructor");
+	}
+}
+public class Test{
+	public static void main(String a[]){
+		Box b2 = new Box(4);
+	}
+}
+```
+
+**Output**: Validate your understanding of above code by cross checking with the following output.
+```
+Box class one argument constructor
+```
+
+* We can only call one super class constructor from its sub class constructor.
+```java
+class Shape{
+	Shape(){
+		System.out.println("Shape class no argument constructor");
+	}
+	Shape(int x){
+		System.out.println("Shape class one argument constructor");
+	}
+}
+class Box extends Shape{ //Box is a sub class of Shape
+	Box(){
+		//Error: We are trying to call two super class constructors.
+		super(); //Calling default constructor.
+		
+		super(5); //We are violating the rule that the super class constructor call must be the first statement. 
+		//Here, this is second statement.
+
+		System.out.println("Box class no argument constructor");
+	}
+}
+public class Test{
+	public static void main(String a[]){
+		Box b1 = new Box();
+	}
+}
+```
+
+**Output**: By adding a call `super(5)`, we are violating the rule that the super class constructor call must be the first statement in the sub class constructor.
+```
+Test.java:14: error: call to super must be first statement in constructor
+                super(5); //We are violating the rule that the super class constructor call must be the first statement.
+                     ^
+1 error
+```
+
+### Using `super` in instance methods
+* Under progress.
+
+## Calling a constructor from another constructor of same class using `this`
+* Under progress.
