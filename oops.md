@@ -1,14 +1,113 @@
 # OOPS in Java
 
 ## Core OOPS concepts
+> *Object Oriented Programming* is a programming paradigm, that advocates, representation of the problem in software domain, by following the same principles of entities in real world. This is the closest representation of the real world entities in software domain and hence, it is very easy to map the entities from real world to software domain.
+
+* **Object**: An object is any entity that exists concretely or conceptually. In OOP, we abstract an object with the state and behaviour sepcific to the problem domain of an entity.
+
+* **Object in OOP**: An object is a combination of state and behaviour. We can mutate or operate on the state of the object through the exposed behaviour of the object. It is an instance of a class.
+
+In OOP, we abstract the required characteristics of an object in the problem domain and map to a similar entity in the program. We capture the state and behaviour of entities in the problem domain.
+
 The core *OOPS* concepts are
-* *Abstraction*
-* *Polymorphism*
-* *Encapsulation*
-* *Inheritance*
+* **Abstraction**: Abstraction is capturing related characteristics (data and behaviour) of an entity, which are specific to the problem domain and ignoring others. For example, to represent a student in a school automation software, we capture properties like *rollNo*, *class* etc, but, ignore properties slike *skin complexion*, *weight*, *hair type* as these are obviously not relevant to the problem that is being solved.
+```java
+class Student{
+	String name;
+	int cls;
+	long rollNo;
+
+	String getName(){return name;}
+}
+
+```
+* **Encapsulation**: It is the process of binding data with behaviour of an object, and the ability to expose only the interface to the users. It allows implementation details to be hidden from the users of the object. In java, encapsulation is achieved using a class to define data and behaviour and limit the exposure of the interface using access modifiers.
+
+* **Polymorphism**: It is the capability of different objects responding to the same message differently, enabling, the message sender can keeping sending the same message, being agnostic to the receiver object. This is achieved using *inheritance* and *overriding*.
+```java
+class Shape{
+	private String name; //Name of the shape.
+	Shape(String name){
+		this.name = name;
+	}
+	public String getName(){
+		return this.name;
+	}
+	public void print(){
+		System.out.println("Shape name: " + this.name);
+	}
+}
+class Line extends Shape{
+	private int length;
+
+	Line(String name, int length){
+		super(name);
+		this.length = length;
+	}
+
+	@Override
+	public void print(){
+		System.out.println("Name: " + getName() + ", Length: " + this.length);
+	}
+}
+class Circle extends Shape{
+	private int radius;
+
+	Circle(String name, int radius){
+		super(name);
+		this.radius = radius;
+	}
+	public void print(){
+		System.out.println("Name: " + getName() + ", Radius: " + this.radius);
+	}
+}
+class Cube extends Shape{
+	int volume;
+	Cube(String name, int volume){
+		super(name);
+		this.volume = volume;
+	}
+	@Override
+	public void print(){
+		super.print();
+		System.out.println("And volume: " + this.volume);
+	}
+}
+
+public class Test{
+	public static void main(String args[]){
+        Shape shapes[] = {
+        	new Line("Line", 4), 
+        	new Circle("Circle", 5),
+        	new Line("Big line", 300),
+        	new Circle("Large circle", 200),
+        	new Cube("Cube", 190),
+        	new Shape("None")
+        };
+        for(Shape shape: shapes){
+        	//Test class is the message sender.
+        	//The same message is being sent to different objects.
+        	//Each object responds in its own way to this very same message.
+        	shape.print();
+        }
+    }
+}
+```
+
+* **Inheritance**: It is the process of deriving new classes by re-using the definition of existing classes. The newly created class will contain all the properties (data and behaviour) of the base class. It can also add its own properties (data and behaviour), override the inherited properties (data and behaviour). Inheritance allows to achieve code re-use and dynamic polymorphism.
+
 * *Association*
 * *Composition*
 * *Aggregation*
+
+* **Class**: A class is a blueprint of an object, in which we can define data members, instance methods, static members, static methods and control their visibility.
+
+* **Some OOP terminology VS Programming terminology**: 
+* A **method** is a message.
+* *Calling* a method on an object is: *send a message to the object*
+* The *caller* is the message *sender*.
+* The *object* that is processing the message (executing method) is the *receiver* of the message.
+
 
 ### Abstraction
 Abstraction is the concept of hiding the implementation details and exposing only the interface to an object.
@@ -627,3 +726,135 @@ public class Test{
 	}
 }
 ```
+
+## The `final` class and `final` method.
+> The keyword `final` can be used to create a constat local variable or static or instance member variable.
+
+```java
+public class Test{
+	static final int y = 40; //inline initialization.
+	static final int a; //Must be initialized in static block.
+	static final int f; //Compiler error. This is not initialized any where. 
+	static{
+		a = 20; //A static final member can be initialized in static block.
+		y = 12; //Compiler error. We cannot assign a static member - it is already initialized.
+	}
+
+	final int x = 90; //inline initialization of instance member.
+	final int z; //This must be initialized in constructor.
+	final int k; //Compiler error. We are not initializing it, even in constructor.
+
+	Test(){
+		//A final data member which is not initialized in declaration
+		//must be (must be) initialized in constructor.
+		//If not, it is a compiler error.
+		z = 56;
+		x = 100; //Compiler error. Re-initialization of final member. Not allowed.
+	}
+	public static void main(String args[]){
+		final int c = 50; //final local must be initialized. No other way.
+		final int d; //We cannot change this value after this line.
+		//Neither we can use this. Hence, it is useless.
+
+		System.out.println("d: " + d); //Compiler error. 
+	}
+}
+```
+
+> `final` class: Final class is a class that cannot be extended by any other class. An abstract class cannot be made `final` as it neither can be instantiated nor inherited.
+
+```java
+final class Some{
+	
+}
+//Compiler error: Final class cannot be inherited.
+class Other extends Some{
+
+}
+//Compiler error: Abstract class cannot be final
+final abstract class SomeOther{
+	//An abstract class cannot be instantiated.
+	//It is meant to be inherited.
+	//And final prevents it from inheriting.
+	//Which makes the class rendered useless.
+}
+
+public class Test{
+	public static void main(String args[]){
+		
+	}
+}
+```
+
+> `final` method: A `final` method of a class cannot be *overriden* by its sub class. As the name suggests, it is the final implementation of the method. Hence, cannot be overridden.
+
+## The `Object` class
+> `java.lang.Object` is a special class in java. It is the super class for all classes. If you define a class and you don't inherit from any class, compiler makes it a sub class of `java.lang.Object` class. Hence, java inheritance hierarchy ends at `Object` class. 
+> The *Object* class implements some useful operations which are available to all classes, due to inheritance.
+> As *Object* is the super class to any class (either immediate super class or an ancestor), *Object* class reference can refer to any object. `Object obj = new <AnyClass>();`
+
+![Object class methods](object-class.png)
+
+## Packages
+> A package is a namespace provider for classes in java. Class names in a package must be unique, but can have duplicate names across packages. A class palced inside a package needs to be qualified with package name to refer to it.
+
+* Declaring a class belongs to a package: In the following example, the class `Test` is inside the package `a.b.c`. Hence, the fully qualified name of this class is `a.b.c.Test`.
+```java
+package a.b.c;
+
+class Test{}
+```
+* Package declaration should be the first statement in a java source file. All the java classes defined in that source file belong to the same package. In the following example, we are defining 3 classes in the same source file. The package declaration is `come.some` -> All these 3 classes are in the same package.
+```java
+package com.some;
+
+class A{}
+class B{}
+class C{}
+```
+* A package (logical namespace container) can contain any number of classes. And, these classes can be defined in any number of files in any folder. In the following example, we are defining 3 different classes in three different files (could be in different folders too) - but, all of them are part of the samel package `com.some`.
+```java
+//A.java
+package com.some;
+
+public class A{}
+
+//B.java
+package com.some;
+
+public class B{}
+
+//C.java
+package com.some;
+
+public class C{}
+```
+
+* When java compiler compiles a java class, the produced *.class* file is placed in a path matching the package hierarchy of the class. The following example contains 3 classes defined in 3 different packages in different paths. Please note that the compiler has created the folder structure matching that of package structure for each of these classes.
+```java
+//D:\source\util\A.java
+package com.util;
+public class A{}
+
+//D:\source\others\B.java
+package com.testing;
+public class B{}
+
+//D:\source\banking\C.java
+package com.finance;
+public class C{}
+
+//Compile the above classes with the following commands.
+//D:\source>javac -d ./output util/A.java
+//D:\source>javac -d ./output others/B.java
+//D:\source>javac -d ./output banking/C.java
+
+//Compiler produces the following files
+//D:\source\output\com\util\A.class
+//D:\source\output\com\testing\B.class
+//D:\source\output\com\finance\C.class
+```
+
+* It is a convention that, create the source files in a folder structure that matches the package hierarchy.
+
+### Classpath

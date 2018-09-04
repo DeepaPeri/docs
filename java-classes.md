@@ -588,6 +588,30 @@ public class Test{
 * Every string literal is an instance of class `String`. `int l = "Hello".length();`
 * String is immutable.
 
+## `static` intialization
+```java
+class Some{
+    static{
+        m();
+    }
+    static void m(){
+        System.out.println("X is : " + x);
+    }
+    static int x = 10;
+}
+public class Test{
+    public static void main(String args[]){
+        //Class meta data is available. But, the class itself is not loaded yet.
+        System.out.println(Some.class.getName()); //Meta data is avaiable.
+        //Hence it can give us class name.
+
+        //x is not part of meta data. It is class property.
+        //Hence, the class must be loaded before accessing 'x'.
+        System.out.println(Some.x); 
+        //Class is loaded here and then the print statement gets executed.
+    }
+}
+```
 
 ## Tips
 
