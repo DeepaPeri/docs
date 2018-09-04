@@ -83,7 +83,7 @@ public class Test{
 }
 ```
 
-### Dynamic Polymorphism
+### Dynamic Polymorphism or Dynamic method dispatch
 > **A super class reference variable can reference a sub class object**: 
 This is a key feature of inheritance. Apart from code reuse (using inheritance), by referencing sub class objects using super class reference variables, we achieve *dynamic polymorphism*
 
@@ -92,6 +92,7 @@ This is a key feature of inheritance. Apart from code reuse (using inheritance),
 	* Overriding
 	* A super class reference variable referring a sub class object
 	* Such super class reference variable - calling an overridden method
+* *Calls to overridden methods are resolved at runtime*
 
 
 ```java
@@ -397,6 +398,49 @@ Dimensions: 0, 0, 0
 
 * The `super` keyword or `this` keyword are not available in `static` methods. Hence, we cannot call a super class method from a `static` method of a sub class.
 
+### A sub class defining same instance variable as super class
+> At times, we can have a sub class defining an instance variable, which is same as the name of a super class instance variable. In such cases, the sub class member will hide the super class member. To access a super class instance member, we can use `super` to refer to it. The statement `super.member` (method or instance property), will do search for the implementation starting in immediate super class and up the hierarchy there after. The property will be accessed from the closest ancestor.
+```java
+class TheBase{
+	int counter = 66; //This cannot be accessed directly by Shape class
+}
+class Something extends TheBase{
+	int counter = 56;
+}
+class Shape extends Something{
+	String name = "Shape";
+}
+class Box extends Shape{ 
+	String name = "Box"; //same as the one defined in Shape class.
+	int counter = 45; //Same as the one defined in Something class.
+	
+	public void print(){
+		System.out.println("Box counter: " + counter);
+		System.out.println("Something counter: " + super.counter); //From Something - the closest ancestor
+		System.out.println("Name defined in super class: " + super.name);
+		System.out.println("Name defined in sub class: " + name);
+	}
+}
+public class Test{
+	public static void main(String a[]){
+		Box b1 = new Box();
+		b1.print();
+	}
+}
+```
+
+**Output**
+```
+Box counter: 45
+Something counter: 56
+Name defined in super class: Shape
+Name defined in sub class: Box
+```
+
+### Order of exeuction of constructors - in inheritance
+> When we instantiate an object of a class, the *constructor* of that class and all its super classes must be executed. The order of execution of these constructors follows the order of derivation. The first call is made to the constructor of the class of which the object is being created. That in turn calls (implicitly or explicitly) its immediate super class constructor as the first statement and this continues until the constructor of *Object* class. Hence, the first constructor to finish the execution is the *Object* class constructor and the last constructor to finish the execution is of the class of which we are creating an object.
+
+
 ## Calling a constructor from another constructor of same class using `this`
 * We can call a *contructor* from another *constructor* of the same class. This is helpful in re-using the initializations done by other constructors. The following program presents a use case where calling a constructor from another one of the same class is useful.
 ```java
@@ -443,4 +487,143 @@ A box with given and dimensions.
 A box with given name and unit dimensions
 ```
 
+## Abstract Classes
+> A class is a characterization of an entity. It can hold the entities state and define behaviour. At times, as part of generalization, in inheritance, it is possible to define an entity's behaviour only partially - in such cases, the class that is defining such partial behaviour is said to be incomplete. The behaviour needs to be completed by its sub classes. Such partial classes can be called as `abstract` classes.
 
+**Example**: In the following example, the super class *Shape* is an abstraction of the common functionality of all kinds of shapes that are being represented in the program. We can represent a *Box* and a *Cube* - these are the concrete entities that we can represent. The *Shape* itself is an abstraction. We don't have any entities of *Shape* to represent. Hence, the *Shape* class is purely present to act as a base class - but, not to create instances of it. Such *Shape* class can be declared as `abstract`, which prevents us from instantiating it.
+```java
+abstract class Shape{//Notice keyword abstract
+	String name;
+
+	void print(){
+		System.out.println("Name is: " + name);
+	}
+}
+class Box extends Shape{ 
+	int width, height, depth;
+	
+	public void print(){
+		super.print();
+		System.out.println("Dimensions: " + width + ", " + height + ", " + depth);
+	}
+}
+
+class Cube extends Shape{ 
+	int radius, height;
+	
+	public void print(){
+		super.print();
+		System.out.println("Dimensions: " + radius + ", " + height);
+	}
+}
+
+public class Test{
+	public static void main(String a[]){
+		Box b = new Box();
+		Cube c = new Cube();
+		Shape s = new Box();
+		Shape s2 = new Cube();
+		Shape s3 = new Shape(); //Error. Cannot instantiate an abstract class.
+	}
+}
+```
+
+**Output**
+```
+Test.java:32: error: Shape is abstract; cannot be instantiated
+                Shape s3 = new Shape(); //Error. Cannot instantiate an abstract class.
+                           ^
+1 error
+```
+
+**Abstract fact sheet**
+* The qualifier `abstract` will make a class abstract.
+* An abstract class cannot be instantiated.
+* The `abstract` qualifier will make a method as abstract. When we know that in the base class, that a behaviour exists, but, the implementation depends on the sub classes, then, we will define `abstract` methods.
+```java
+//As this class contains an abstract method, the class must be declared as abstract.
+abstract class Account{//Notice keyword abstract
+	String accountHolderName;
+	double balance;
+
+	double getBalance(){//Concrete implementation
+		return balance;
+	}
+
+	//abstract declaration. No method implementation possible.
+	abstract double computeInterest(); 
+	//We know that an account must have computeInterest operation,
+	//but, the specific way of computing interest will depend on type of account.
+	//Only subclasses can implement this.
+}
+
+//This class must implement the abstract method computeInterest of Account class.
+//If not, this class will also needs to be declared as abstract.
+class SavingsAccount extends Account{
+	@Override 
+	double computeInterest(){
+		return getBalance() * 0.09;
+	}
+}
+
+class RecurringAccount extends Account{
+	@Override 
+	double computeInterest(){
+		return getBalance() * 0.11;
+	}
+}
+
+public class Test{
+	public static void main(String args[]){
+		SavingsAccount sa = new SavingsAccount();
+		RecurringAccount ra = new RecurringAccount();
+		sa.computeInterest();
+		ra.computeInterest();
+
+		Account a = sa; //We can create reference variable of an abstract class.
+		a.computeInterest(); //dynamic binding.
+		a = ra;
+		a.computeInterest();
+	}
+}
+```
+
+* If a class contains at least one `abstract` method, then the class must be declared as `abstract` - because, the presence of an `abstract` method indicates a missing behaviour, which inturn denotes that the class definition is not complete - hence, class must be declared as `abstract`
+* It is not necessary for an `abstract` class to have `abstract` methods. In the first example, the *Shape* class does not contain any `abstract` methods, but, it is qualified as `abstract` - It is a notional indication that the class definition is not concrete and do not create objects of it.
+* A class must implement the abstract methods (missing implementations) derived from any of its ancestors and are not implemented anywhere in its hierarchy. If not, the class must be qualified with `abstract`.
+```java
+abstract class ClassA{
+	abstract void check(); 
+}
+
+//The child of this class must implement two methods
+//check() and test() to become concrete.
+abstract class ClassB extends ClassA{
+	abstract void test();
+}
+
+//This class is abstract because the check() method is not implemented.
+//The sub classes of this class should implement check() to become concrete class.
+abstract class ClassC extends ClassB{
+	@Override 
+	void test(){
+		System.out.println("ClassC test method");
+	}
+}
+
+//It must implement check() method.
+//The test() method is implemented in its ancestors.
+class ClassD extends ClassC{
+	@Override
+	////This must be implemented.
+	//If not, even this class should be declared as abstract
+	void check(){ 
+		System.out.println("ClassD check method");
+	}
+}
+public class Test{
+	public static void main(String args[]){
+		ClassD d = new ClassD();
+	}
+}
+```
