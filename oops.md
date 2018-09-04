@@ -363,7 +363,84 @@ Test.java:14: error: call to super must be first statement in constructor
 ```
 
 ### Using `super` in instance methods
-* Under progress.
+* If a sub class is overriding a method of a super class, then, if the sub class method want to call the super class version of the method, we can qualify the super class method name with keyword `super`. This is demonstrated in the following example.
+```java
+class Shape{
+	String name;
+
+	public void print(){
+		System.out.println("The name: " + name);
+	}
+}
+class Box extends Shape{ 
+	int width, height, depth;
+	
+	@Override
+	public void print(){
+		super.print(); //Call the super class print method.
+		System.out.println("Dimensions: " + width + ", " + height + ", " + depth);
+	}
+}
+public class Test{
+	public static void main(String a[]){
+		Box b1 = new Box(); //Default name and unit box.
+		b1.print();
+	}
+}
+```
+
+**Output**:
+```
+The name: null
+Dimensions: 0, 0, 0
+```
+
+* The `super` keyword or `this` keyword are not available in `static` methods. Hence, we cannot call a super class method from a `static` method of a sub class.
 
 ## Calling a constructor from another constructor of same class using `this`
-* Under progress.
+* We can call a *contructor* from another *constructor* of the same class. This is helpful in re-using the initializations done by other constructors. The following program presents a use case where calling a constructor from another one of the same class is useful.
+```java
+class Box{ //Box is a sub class of Shape
+	int width, height, depth;
+	String name;
+
+	Box(){
+		//Adds a default value to name
+		this("A Box"); //Call one argument constructor.
+		System.out.println("Box class no argument constructor with default name.");
+	}
+
+	Box(String name){
+		//Adds default values for width, height and depth
+		this(name, 1, 1, 1); //Call 4 argument constructor.
+		System.out.println("A box with given name and unit dimensions");
+	}
+
+	Box(String name, int w, int h, int d){
+		this.name = name;
+		this.width = w;
+		this.height = h;
+		this.depth = d;
+		System.out.println("A box with given and dimensions.");
+	}
+}
+public class Test{
+	public static void main(String a[]){
+		Box b1 = new Box(); //Default name and unit box.
+		Box b2 = new Box("Big box");
+	}
+}
+```
+
+**Output**:
+```
+Shape class no argument constructor
+A box with given and dimensions.
+A box with given name and unit dimensions
+Box class no argument constructor with default name.
+Shape class no argument constructor
+A box with given and dimensions.
+A box with given name and unit dimensions
+```
+
+
