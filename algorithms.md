@@ -55,7 +55,7 @@ class Main{
 * The *height* of a tree is its maximum depth.
 ```
 depth(n) = 1 if n is the root.
-		 = 1 + depth(paent(n)) otherwise
+	    = 1 + depth(paent(n)) otherwise
 ```
 * **Important terminalogy**: tree, root, child, subtree, leaf, internal node, branch, parent, grand parent, sibling, ancestor, descendant, depth, level.
 * A tree is a *binary tree* in which every node has at most two children, usually named *left* and *right*.
@@ -63,11 +63,11 @@ depth(n) = 1 if n is the root.
 * **Expression Tree** is a binary tree which translates each binary operation to a tree with its operator as the root and its two operands as the left and right children.
 ```
 Expression: (A + B) * C
-						*
+					    *
 					   / \
 					  /   \
 					 +     C
 					/ \
-				   /   \
-				  A     B
+				    /   \
+				   A     B
 ```
