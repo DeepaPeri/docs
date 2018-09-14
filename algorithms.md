@@ -136,15 +136,15 @@ public abstract class BinaryTree{
 	protected Node root;
 	private String preorder(Node n){
 		if(n == null) return "";
-		return (n + " " + preorder(n.left) + " " + preorder(n.right)).trim();
+		return (n.data + " " + preorder(n.left) + " " + preorder(n.right)).trim();
 	}
 	private String postorder(Node n){
 		if(n == null) return "";
-		return (postorder(n.left) + " " + postorder(n.right) + " " + n).trim();
+		return (postorder(n.left) + " " + postorder(n.right) + " " + n.data).trim();
 	}
 	private String inorder(Node n){
 		if(n == null) return "";
-		return (inorder(n.left) + " " + n + " " + inorder(n.right)).trim();
+		return (inorder(n.left) + " " + n.data + " " + inorder(n.right)).trim();
 	}
 
 	public String preorder(){ return preorder(root);	}
@@ -177,7 +177,7 @@ public Node findNode(int item, Node root){
 
 	if(item == root.data) return root;
 	if(item < root.data) return findNode(item, root.left);
-	return findNode(item, root.left);
+	return findNode(item, root.right);
 }
 ```
 
@@ -195,5 +195,88 @@ public Node largest(Node root){
 	if(root == null) return null;
 	if(root.right == null) return root; //This is the left most leaf.
 	return largest(root.right);
+}
+```
+
+The **predecessor** of an element in a binary search tree is the element that precedes it during an **inorder** traversal. The **successor** is defined similarly as the element immediately following. The minimum in a tree has no predecessor, and the maximum has no successor.
+
+```java
+public Node predecessor(Node node){
+	if(node == null) return null;
+	if(node.left == null) return null;
+	return largest(node.left);
+}
+
+public Node successor(Node node){
+	if(node == null) return null;
+	if(node.right == null) return null;
+	return smallest(node.right);
+}
+```
+
+**Insert Node in Binary Search Tree**: Follows search. **Newly inserted node is always a leaf**
+```java
+public void insert(Node nodeToInsert){
+	if(nodeToInsert == null) return;
+	nodeToInsert.left =  null;
+	nodeToInsert.right = null;
+	if(this.root == null) {
+		this.root = nodeToInsert;
+		return;
+	}
+	insert(this.root, nodeToInsert);
+}
+private void insert(Node root, Node nodeToInsert){
+	//root and nodeToInsert will not be null.
+	if(nodeToInsert.data < root.data){
+		//Belongs to left subtree
+		if(root.left == null){
+			root.left = nodeToInsert;
+		}else{
+			insert(root.left, nodeToInsert);
+		}
+	}else if(nodeToInsert.data > root.data){
+		//Belongs to right subtree
+		if(root.right == null) root.right = nodeToInsert;
+		else insert(root.right, nodeToInsert);
+	}else{
+		//Error.
+		throw new Exception("Duplicate value found. Cannot insert into binary search tree.");
+	}
+}
+```
+
+**Deletion**: Replace the node being deleted with it's predecessor or successor.
+```java
+//Incomplete.
+public void delete(Node nodeToDelete){
+	if(nodeToDelete == null) return;
+	if(nodeToDelete == this.root){
+		this.root = null;
+		return;
+	}
+	Node parentLink = nodeToDelete.parent.left == nodeToDelete ? nodeToDelete.parent.left : nodeToDelete.parent.right;
+	if(nodeToDelete.left == null && nodeToDelete.right == null){
+		//Leaf node.
+		if(nodeToDelete.parent.left == nodeToDelete){
+			//it is left child of its parent.
+			nodeToDelete.parent.left = null;
+		}else{
+			//it is right child of its parent.
+			nodeToDelete.parent.right = null;
+		}
+	}else if(nodeToDelete.left != null){
+		//only left child.
+		if(nodeToDelete.parent.left == nodeToDelete){
+			//it is left child of its parent.
+			nodeToDelete.parent.left = null;
+		}else{
+			//it is right child of its parent.
+			nodeToDelete.parent.right = null;
+		}
+	}else if(nodeToDelete.right != null){
+		//only right child.
+		nodeToDelete.parent.right = nodeToDelete.left;
+	}
 }
 ```
