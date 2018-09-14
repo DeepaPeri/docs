@@ -1,65 +1,34 @@
-class Shape{
-	private String name; //Name of the shape.
-	Shape(String name){
-		this.name = name;
-	}
-	public String getName(){
-		return this.name;
-	}
-	public void print(){
-		System.out.println("Shape name: " + this.name);
-	}
-}
-class Line extends Shape{
-	private int length;
+import java.util.Random;
 
-	Line(String name, int length){
-		super(name);
-		this.length = length;
+public abstract class BinaryTree<E>{
+	protected Node<E> root;
+	private String preorder(Node<E> n){
+		if(n == null) return "";
+		return (n + " " + preorder(n.left) + " " + preorder(n.right)).trim();
+	}
+	private String postorder(Node<E> n){
+		if(n == null) return "";
+		return (postorder(n.left) + " " + postorder(n.right) + " " + n).trim();
+	}
+	private String inorder(Node<E> n){
+		if(n == null) return "";
+		return (inorder(n.left) + " " + n + " " + inorder(n.right)).trim();
 	}
 
-	@Override
-	public void print(){
-		System.out.println("Name: " + getName() + ", Length: " + this.length);
-	}
-}
-class Circle extends Shape{
-	private int radius;
+	public String preorder(){ return preorder(root);	}
+	public String postorder(){ return postorder(root);	}
+	public String inorder(){ return inorder(root);	}
 
-	Circle(String name, int radius){
-		super(name);
-		this.radius = radius;
-	}
-	public void print(){
-		System.out.println("Name: " + getName() + ", Radius: " + this.radius);
-	}
-}
-class Cube extends Shape{
-	int volume;
-	Cube(String name, int volume){
-		super(name);
-		this.volume = volume;
-	}
-	@Override
-	public void print(){
-		super.print();
-		System.out.println("And volume: " + this.volume);
-	}
-}
+	protected static class Node<T>{
+		protected T data;
+		protected Node<T> left, right, parent;
 
-public class Test{
-	public static void main(String args[]){
-        Shape shapes[] = {
-        	new Line("Line", 4), 
-        	new Circle("Circle", 5),
-        	new Line("Big line", 300),
-        	new Circle("Large circle", 200),
-        	new Cube("Cube", 190),
-        	new Shape("None")
-        };
-        for(Shape shape: shapes){
-        	//Test class is the message sender.
-        	shape.print();
-        }
-    }
+		protected Node(T data, Node<T> parent){
+			this.data = data;
+			this.parent = parent;
+		}
+		public String toString(){
+			return data.toString();
+		}
+	}
 }
